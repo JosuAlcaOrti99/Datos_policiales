@@ -31,7 +31,7 @@ library(DT)
 ```{r, message=FALSE, echo=FALSE}
 
 Datos_Policiales <-
-  readxl::read_excel("C:/Users/Josue Alcazar/Desktop/R Tareas/Estadisticas-Policiales-/estadisticaspoliciales2021.xls" ) %>%
+  readxl::read_excel("estadisticaspoliciales2021.xls" ) %>%
   select("Delito", "Fecha", "Victima", "Edad", "Genero", "Provincia", "Canton") %>%
   mutate(Fecha = as.Date(Fecha, format = "%d/%m/%Y"))
 
