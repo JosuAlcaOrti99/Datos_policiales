@@ -19,21 +19,26 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ## tabla de datos
 ```{r, message=FALSE, echo=FALSE}
-library(tidyverse)
+library(readr) # lectura de archivos CSV
+library(tidyr) # tidyverse
+library(readxl) # lectura de archivos XLS
+library(dplyr) # transformación de datos
+library(DT) # tablas interactivas
+library(sf) # manejo de datos vectoriales
+library(spData)
 library(ggplot2)
 library(plotly)
-library(readr)
-library(dplyr)
-library(DT)
+library(graphics)
+library(stringi)
+
 
 ```
 
 ```{r, message=FALSE, echo=FALSE}
 
 Datos_Policiales <-
-  readxl::read_excel("C:/Users/Josue Alcazar/Desktop/R Tareas/Estadisticas-Policiales-/estadisticaspoliciales2021.xls" ) %>%
-  select("Delito", "Fecha", "Victima", "Edad", "Genero", "Provincia", "Canton") %>%
-  mutate(Fecha = as.Date(Fecha, format = "%d/%m/%Y"))
+  read_xls(path = "estadisticaspoliciales2021.xls")
+ 
 
 
 ```
@@ -41,12 +46,15 @@ Datos_Policiales <-
 ```{r, message=FALSE, echo=FALSE}
 
 # Visualización de datos nacionales policiales en formato tabular
-  Datos_Policiales %>%
-  datatable(options = list(
-    pageLength = 10,
-    locale = locale(encoding = "WINDOWS-1252"),
-    language = list(url = '//cdn.datatables.net/plug-ins/1.10.11/i18n/Spanish.json')),
-  colnames = c( 'Delito', 'Fecha', 'Victima', 'Edad', 'Genero', 'Provincia','Canton')) 
+Datos_Policiales %>%
+  select(Delito, Fecha, Victima, Edad, Genero, Provincia, Canton, Distrito) %>% 
+  mutate(Fecha = as.Date(Fecha, format = "%d/%m/%Y")) %>%
+  datatable(
+    colnames = c("Delito", "Fecha", "Víctima", "Edad", "Género", "Provincia", "Cantón", "Distrito"),
+    options = list(
+      pageLenght = 15 ,
+      language = list(url = '//cdn.datatables.net/plug-ins/1.10.11/i18n/Spanish.json'))
+  )
 ```
 
 
