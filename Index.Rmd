@@ -47,10 +47,10 @@ Datos_Policiales <-
 
 # Visualización de datos nacionales policiales en formato tabular
 Datos_Policiales %>%
-  select(Delito, Fecha, Victima, Edad, Genero, Provincia, Canton, Distrito) %>% 
+  select(Delito, Fecha, Victima, Edad, Genero, Provincia, Canton) %>% 
   mutate(Fecha = as.Date(Fecha, format = "%d/%m/%Y")) %>%
   datatable(
-    colnames = c("Delito", "Fecha", "Víctima", "Edad", "Género", "Provincia", "Cantón", "Distrito"),
+    colnames = c("Delito", "Fecha", "Víctima", "Edad", "Género", "Provincia", "Cantón"),
     options = list(
       pageLenght = 15 ,
       language = list(url = '//cdn.datatables.net/plug-ins/1.10.11/i18n/Spanish.json'))
