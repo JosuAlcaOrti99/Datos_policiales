@@ -14,7 +14,7 @@ html_document:
 ---
 
 ```{r setup, include=FALSE, echo=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(echo=FALSE,message=FALSE)
 ```
 
 ## tabla de datos
@@ -56,6 +56,127 @@ Datos_Policiales %>%
       language = list(url = '//cdn.datatables.net/plug-ins/1.10.11/i18n/Spanish.json'))
   )
 ```
+##### **Fuente de los datos: [Pagina web de datos abiertos del OIJ](https://sitiooij.poder-judicial.go.cr/index.php/ayuda/servicios-policiales/servicios-a-organizaciones/indice-de-transparencia-del-sector-publico-costarricense/datos-abiertos)**
+
+### Delitos por tipo de delito
+
+```{r graficos, echo=FALSE, results='hide',message=FALSE}
+delitos_x_tipodelito <-
+  Datos_Policiales %>%
+  count(Delito, name = "Cantidad de delitos") # con esto cuento la cantidad de delitos por tipo de delito y hago un dataframe para el grafico 
+
+```
 
 
+```{r, echo=FALSE}
+
+Grafico_barras_delixprov <-
+ delitos_x_tipodelito %>%
+  ggplot(aes(x = reorder(Delito, `Cantidad de delitos`), y = `Cantidad de delitos`)) +    # Me ordena las columnas de mayor a menor y me da los parametros del grafico 
+  geom_bar(stat = "identity", color = "lightblue", fill = "yellow") +                     #define la identidad del grafico y personaliza las barras
+  ggtitle("Cantidad de delitos por tipo de delito") + # Me da el titulo del grafico 
+  xlab("Tipo de delito") + # Nombre del eje X
+  ylab("Cantidad de delitos") + # Nobre del eje y
+  coord_flip() + # Hace que el grafico quede horizontal
+  theme_minimal() # Me pone el tema del grafico 
+
+
+ggplotly(Grafico_barras_delixprov) %>% config(locale = 'es')
+
+```
+##### **Fuente de los datos: [Pagina web de datos abiertos del OIJ](https://sitiooij.poder-judicial.go.cr/index.php/ayuda/servicios-policiales/servicios-a-organizaciones/indice-de-transparencia-del-sector-publico-costarricense/datos-abiertos)**
+
+### Delitos por mes del año 
+
+```{r,echo=FALSE, results='hide',message=FALSE}
+delitos_x_fecha <-
+  Datos_Policiales %>%
+  count( Fecha , name = "Cantidad de delitos por fecha")# con esto cuento la cantidad de delitos por victima y agrego la columna para el grafico 
+
+```
+.
+```{r, echo=FALSE, message=FALSE}
+Fecha_dividida <-
+Datos_Policiales %>%
+  select(Fecha) %>%
+  mutate(Fecha = as.Date(Fecha, format = "%d/%m/%Y"))%>% 
+   mutate(Dia = as.numeric(format(Fecha, '%d')))%>% 
+  mutate(Mes = as.character(format(Fecha, '%m'))) %>% 
+  mutate(Ano = as.numeric(format(Fecha, '%Y'))) %>% 
+  count(Mes, name = "Casos en el mes")
+
+
+  
+```
+
+```{r, echo=FALSE, message=FALSE}
+  
+Grafico_barras_delixfecha <-
+ Fecha_dividida %>%
+  ggplot(aes(x = Mes, y = `Casos en el mes`)) +
+  geom_bar(stat = "identity", color = "black",fill = "lightblue") +
+  ggtitle("Cantidad de delitos por mes") +
+  xlab("Mes") +
+  ylab("cantidad de delitos") +
+  theme_classic()
+
+
+ggplotly(Grafico_barras_delixfecha) %>% config(locale = 'es')
+
+```
+
+##### **Fuente de los datos: [Pagina web de datos abiertos del OIJ](https://sitiooij.poder-judicial.go.cr/index.php/ayuda/servicios-policiales/servicios-a-organizaciones/indice-de-transparencia-del-sector-publico-costarricense/datos-abiertos)**
+
+### Delitos por genero
+
+
+```{r, echo=FALSE, message=FALSE}
+
+delitos_x_genero <-
+  Datos_Policiales %>% 
+  count(Genero, name = "Cantidad de delitos por genero")
+
+
+barras_apiladas_cantidad <-
+  Datos_Policiales %>%
+  ggplot(aes(x = Delito , fill = Genero)) +
+  geom_bar( position = "fill" ) +
+  ggtitle("Promedio de delitos por genero") +
+  xlab("Tipo de delito") +
+  ylab("Promedio") +
+  labs(fill = "Genero") +
+  coord_flip() + 
+  theme_minimal()
+
+ggplotly(barras_apiladas_cantidad) %>% config(locale = 'es')
+
+```
+##### **Fuente de los datos: [Pagina web de datos abiertos del OIJ](https://sitiooij.poder-judicial.go.cr/index.php/ayuda/servicios-policiales/servicios-a-organizaciones/indice-de-transparencia-del-sector-publico-costarricense/datos-abiertos)**
+
+### DELITOS POR CANTON
+```{r, echo=FALSE, message=FALSE}
+delitos_x_canton<-
+  Datos_Policiales %>% 
+count(Canton, name = "cantidad")
+
+delitos_x_canton <-
+  delitos_x_canton %>% 
+  filter(Canton %in% c("SAN JOSE","HEREDIA","CARTAGO","ALAJUELA"))
+
+  
+```
+
+```{r, echo=FALSE, message=FALSE}
+Grafico_barras_delixcanton <-
+ delitos_x_canton %>%
+  ggplot(aes(x = reorder(Canton,-cantidad), y = cantidad)) +
+  geom_bar(stat = "identity", color = "black",fill = "lightblue") +
+  ggtitle("Cantidad de delitos por mes") +
+  xlab("Canton") +
+  ylab("Cantidad de delitos") +
+  theme_classic()
+
+
+ggplotly(Grafico_barras_delixcanton) %>% config(locale = 'es')
+```
 
